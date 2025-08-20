@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تخزين بيانات عائلة عبد النبي</title>
+<style>
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg,#0f2027,#203a43,#2c5364); color: #fff; margin:0; padding:0;}
+header { text-align:center; padding:25px; font-size:2em; background:linear-gradient(90deg,#ff4e00,#f9d423); color:#1a1a2e; border-bottom:3px solid #f9d423;}
+main { max-width:950px; margin:20px auto; padding:20px; background:rgba(255,255,255,0.05); border-radius:15px; box-shadow:0 0 15px rgba(0,0,0,0.5);}
+section { display:none; }
+input, button, select { padding:10px; margin:8px 0; border-radius:8px; border:none; width:100%; box-sizing:border-box;}
+button { background:linear-gradient(90deg,#f9d423,#ff4e00); color:#1a1a2e; font-weight:bold; cursor:pointer; transition:0.3s; }
+button:hover { opacity:0.9; transform:scale(1.03);}
+table { width:100%; border-collapse: collapse; margin-top:15px; background:rgba(0,0,0,0.3);}
+th, td { border:1px solid #f9d423; padding:8px; text-align:center; }
+img.userPic { max-width:80px; border-radius:50%; }
+h2,h3 { text-align:center; margin-bottom:15px;}
+nav { text-align:center; margin-bottom:20px;}
+nav button { width:auto; margin:5px; }
+</style>
+</head>
+<body>
+
+<header>تخزين بيانات عائلة عبد النبي</header>
+
+<main>
+
+<nav>
+  <button onclick="showSection('userRegisterPage')">تسجيل مستخدم</button>
+  <button onclick="showSection('devLoginPage')">دخول المطور</button>
+</nav>
+
+<!-- صفحة تسجيل المستخدم -->
+<section id="userRegisterPage" style="display:block;">
+  <h2>تسجيل المستخدم</h2>
+  <input type="text" id="fullName" placeholder="الاسم رباعي">
+  <input type="text" id="phone" placeholder="رقم الهاتف">
+  <input type="text" id="idNumber" placeholder="رقم الهوية">
+  <input type="text" id="wifeName" placeholder="اسم الزوجة">
+  <input type="text" id="wifeId" placeholder="رقم هوية الزوجة">
+  <input type="number" id="childrenCount" placeholder="عدد الأولاد">
+  <input type="text" id="residence" placeholder="مكان السكن">
+  <input type="file" id="photo" accept="image/*">
+  <button id="registerUser">تسجيل</button>
+  <p id="registerMsg" style="color:yellow;"></p>
+</section>
+
+<!-- صفحة عرض بيانات المستخدم -->
+<section id="userPage">
+  <h2>بياناتك الشخصية</h2>
+  <div id="userInfo"></div>
+  <button onclick="backToRegister()">عودة للتسجيل</button>
+</section>
+
+<!-- صفحة تسجيل دخول المطور -->
+<section id="devLoginPage">
+  <h2>دخول المطور</h2>
+  <input type="password" id="devPass" placeholder="كلمة مرور المطور">
+  <button id="loginDev">دخول</button>
+  <p id="devError" style="color:red;"></p>
+</section>
+
+<!-- صفحة المطور -->
+<section id="developerPage">
+  <h2>صفحة المطور</h2>
+  <div><strong>اسم المطور:</strong> عبد السلام مازن عطوة عبد النبي</div>
+  <div><strong>رقم الهاتف:</strong> 0597498394</div>
+
+  <h3>بيانات المسجلين</h3>
+  <table id="usersTable">
+    <tr>
+      <th>الاسم</th>
+      <th>الهاتف</th>
+      <th>الهوية</th>
+      <th>اسم الزوجة</th>
+      <th>هوية الزوجة</th>
+      <th>عدد الأولاد</th>
+      <th>مكان السكن</th>
+      <th>صورة</th>
+    </tr>
+  </table>
+  <button onclick="logoutDev()">تسجيل خروج</button>
+  <button onclick="downloadPDF()">تحميل PDF</button>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const users = [];
+
+function showSection(sectionId){
+  document.querySelectorAll('section').forEach(sec=>sec.style.display='none');
+  document.getElementById(sectionId).style.display='block';
+}
+
+// تسجيل مستخدم
+document.getElementById('registerUser').addEventListener('click', ()=>{
+  const fullName = document.getElementById('fullName').value;
+  const phone = document.getElementById('phone').value;
+  const idNumber = document.getElementById('idNumber').value;
+  const wifeName = document.getElementById('wifeName').value;
+  const wifeId = document.getElementById('wifeId').value;
+  const childrenCount = document.getElementById('childrenCount').value;
+  const residence = document.getElementById('residence').value;
+  const photoFile = document.getElementById('photo').files[0];
+
+  if(!fullName || !phone || !idNumber || !wifeName || !wifeId || !childrenCount || !residence || !photoFile){
+    document.getElementById('registerMsg').innerText = "يرجى ملء كل الحقول!";
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const user = {fullName, phone, idNumber, wifeName, wifeId, childrenCount, residence, photo:e.target.result};
+    users.push(user);
+
+    // عرض بيانات المستخدم
+    showSection('userPage');
+    document.getElementById('userInfo').innerHTML = `
+      <p><strong>الاسم:</strong> ${fullName}</p>
+      <p><strong>الهاتف:</strong> ${phone}</p>
+      <p><strong>رقم الهوية:</strong> ${idNumber}</p>
+      <p><strong>اسم الزوجة:</strong> ${wifeName}</p>
+      <p><strong>هوية الزوجة:</strong> ${wifeId}</p>
+      <p><strong>عدد الأولاد:</strong> ${childrenCount}</p>
+      <p><strong>مكان السكن:</strong> ${residence}</p>
+      <img src="${e.target.result}" class="userPic">
+    `;
+    document.getElementById('registerMsg').innerText='';
+  };
+  reader.readAsDataURL(photoFile);
+});
+
+function backToRegister(){
+  showSection('userRegisterPage');
+  document.querySelectorAll('#userRegisterPage input').forEach(i=>i.value='');
+  document.getElementById('registerMsg').innerText='';
+}
+
+// دخول المطور
+document.getElementById('loginDev').addEventListener('click', ()=>{
+  const pass = document.getElementById('devPass').value;
+  if(pass==='abd20052005'){
+    showSection('developerPage');
+    updateUsersTable();
+    document.getElementById('devError').innerText='';
+  } else {
+    document.getElementById('devError').innerText='كلمة المرور غير صحيحة!';
+  }
+});
+
+function logoutDev(){
+  showSection('devLoginPage');
+  document.getElementById('devPass').value='';
+}
+
+function updateUsersTable(){
+  const table = document.getElementById('usersTable');
+  table.innerHTML = `<tr>
+      <th>الاسم</th><th>الهاتف</th><th>الهوية</th>
+      <th>اسم الزوجة</th><th>هوية الزوجة</th>
+      <th>عدد الأولاد</th><th>مكان السكن</th><th>صورة</th>
+    </tr>`;
+  users.forEach(u=>{
+    const row = table.insertRow();
+    row.insertCell(0).innerText = u.fullName;
+    row.insertCell(1).innerText = u.phone;
+    row.insertCell(2).innerText = u.idNumber;
+    row.insertCell(3).innerText = u.wifeName;
+    row.insertCell(4).innerText = u.wifeId;
+    row.insertCell(5).innerText = u.childrenCount;
+    row.insertCell(6).innerText = u.residence;
+    const imgCell = row.insertCell(7);
+    const img = document.createElement('img');
+    img.src = u.photo;
+    img.className = 'userPic';
+    imgCell.appendChild(img);
+  });
+}
+
+// تحميل PDF
+function downloadPDF(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  let y = 10;
+  doc.setFontSize(16);
+  doc.text("بيانات عائلة عبد النبي", 105, y, null, null, "center");
+  y += 10;
+  users.forEach((u,i)=>{
+    doc.setFontSize(12);
+    doc.text(`المستخدم ${i+1}:`, 10, y); y+=6;
+    doc.text(`الاسم: ${u.fullName}`, 10, y); y+=6;
+    doc.text(`الهاتف: ${u.phone}`, 10, y); y+=6;
+    doc.text(`رقم الهوية: ${u.idNumber}`, 10, y); y+=6;
+    doc.text(`اسم الزوجة: ${u.wifeName}`, 10, y); y+=6;
+    doc.text(`هوية الزوجة: ${u.wifeId}`, 10, y); y+=6;
+    doc.text(`عدد الأولاد: ${u.childrenCount}`, 10, y); y+=6;
+    doc.text(`مكان السكن: ${u.residence}`, 10, y); y+=10;
+    if(y>270){ doc.addPage(); y=10;}
+  });
+  doc.save('FamilyData.pdf');
+}
+</script>
+</body>
+</html>
