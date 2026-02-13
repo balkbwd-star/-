@@ -3,271 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>التسجيل لمساعدات الاغاثية لسكان القطاع </title>
+    <title>مؤسسة الإنسان أولاً - الإدارة</title>
     <style>
-        :root { --primary: #0f172a; --accent: #2563eb; --success: #16a34a; --bg: #f1f5f9; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; color: #334155; }
-        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom: 4px solid var(--accent); }
-        nav { display: flex; justify-content: center; background: white; padding: 10px; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); sticky: top; }
-        nav button { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: #e2e8f0; transition: 0.3s; }
-        nav button.active { background: var(--accent); color: white; }
+        :root { --primary: #0f172a; --accent: #2563eb; --bg: #f1f5f9; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; }
+        .container { max-width: 900px; margin: 20px auto; padding: 20px; }
+        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .btn { background: var(--accent); color: white; padding: 12px; border: none; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; }
         
-        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: none; }
-        .active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        h3 { border-right: 5px solid var(--accent); padding-right: 15px; color: var(--primary); margin-top: 30px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-        .field { display: flex; flex-direction: column; }
-        label { font-size: 14px; font-weight: bold; margin-bottom: 8px; }
-        input, select { padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 15px; outline: none; }
-        input:focus { border-color: var(--accent); }
-        
-        .btn-submit { background: var(--accent); color: white; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 18px; margin-top: 25px; }
-        .btn-sync { background: #334155; color: white; padding: 8px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 5px; }
-        
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
-        th, td { padding: 15px; border: 1px solid #e2e8f0; text-align: center; }
-        th { background: #f8fafc; color: var(--primary); }
-        .priority-high { border-right: 8px solid #ef4444; background: #fef2f2; }
-        
-        .search-box { width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 10px; border: 2px solid var(--accent); font-size: 16px; box-sizing: border-box; }
+        /* تنسيق جدول البيانات */
+        #adminSection { display: none; margin-top: 30px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background: var(--primary); color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .admin-login { border-top: 2px dashed #ccc; padding-top: 20px; text-align: center; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>التسجيل في مؤسسة الانسان اولا</h1>
-    <p>نظام الربط مع السجل المدني وإدارة الاستحقاق</p>
+    <h1>مؤسسة الإنسان أولاً</h1>
+    <p>نظام التسجيل السحابي المباشر</p>
 </header>
 
-<nav>
-    <button class="active" onclick="showTab('reg', this)">📝 تسجيل مستفيد</button>
-    <button onclick="showTab('search', this)">🔍 استعلام الجمهور</button>
-    <button onclick="showTab('admin', this)">🛠️ لوحة المطور</button>
-</nav>
-
 <div class="container">
-
-    <div id="reg" class="card active">
-        <h3>1. البيانات الأساسية (من السجل المدني)</h3>
-        <form id="masterForm">
-            <div class="grid">
-                <div class="field">
-                    <label>رقم الهوية</label>
-                    <input type="number" id="r_id" oninput="if(this.value.length>9)this.value=this.value.slice(0,9)" placeholder="أدخل 9 أرقام" required>
-                    <button type="button" class="btn-sync" onclick="syncCivil()">🔗 جلب بيانات الداخلية</button>
-                </div>
-                <div class="field"><label>الاسم رباعي</label><input type="text" id="r_name" placeholder="الاسم كما في الهوية" required></div>
-                <div class="field"><label>تاريخ الميلاد</label><input type="date" id="r_dob" required></div>
-                <div class="field">
-                    <label>الجنس</label>
-                    <select id="r_gender"><option>ذكر</option><option>أنثى</option></select>
-                </div>
-            </div>
-
-            <h3>2. تفاصيل السكن والتواصل</h3>
-            <div class="grid">
-                <div class="field">
-                    <label>المحافظة</label>
-                    <select id="r_gov">
-                        <option>شمال غزة</option><option>غزة</option><option>الوسطى</option><option>خانيونس</option><option>رفح</option>
-                    </select>
-                </div>
-                <div class="field"><label>المدينة / المخيم</label><input type="text" id="r_city" required></div>
-                <div class="field"><label>الحي / الشارع</label><input type="text" id="r_area" required></div>
-                <div class="field"><label>رقم الجوال</label><input type="number" id="r_phone" required></div>
-            </div>
-
-            <h3>3. الحالة الاجتماعية والاقتصادية</h3>
-            <div class="grid">
-                <div class="field">
-                    <label>الحالة الاجتماعية</label>
-                    <select id="r_social"><option>متزوج</option><option>أعزب</option><option>أرمل</option><option>مطلق</option></select>
-                </div>
-                <div class="field"><label>عدد أفراد الأسرة</label><input type="number" id="r_fam" min="1" required></div>
-                <div class="field">
-                    <label>الوظيفة</label>
-                    <select id="r_job">
-                        <option>عاطل عن العمل</option><option>عامل مياومة</option><option>خريج بلا عمل</option>
-                        <option>موظف (غزة)</option><option>موظف (رام الله)</option><option>قطاع خاص</option>
-                        <option>متقاعد</option><option>أخرى</option>
-                    </select>
-                </div>
-                <div class="field"><label>اسم الزوجة (إن وجد)</label><input type="text" id="r_wife"></div>
-            </div>
-            <button type="submit" class="btn-submit">حفظ الطلب في قاعدة البيانات ✅</button>
+    <div class="card" id="formCard">
+        <h3>📝 تسجيل طلب مساعدة جديد</h3>
+        <form id="regForm">
+            <input type="text" id="name" placeholder="الاسم الرباعي" required>
+            <input type="number" id="idCard" placeholder="رقم الهوية" required>
+            <input type="number" id="phone" placeholder="رقم الجوال" required>
+            <select id="gov">
+                <option>شمال غزة</option><option>غزة</option><option>الوسطى</option><option>خانيونس</option><option>رفح</option>
+            </select>
+            <input type="number" id="famCount" placeholder="عدد الأفراد" required>
+            <button type="submit" id="submitBtn" class="btn">إرسال الطلب ✅</button>
         </form>
     </div>
 
-    <div id="search" class="card">
-        <h3>🔍 استعلام عن مستفيد</h3>
-        <input type="text" id="userQuery" class="search-box" placeholder="ابحث بكتابة الاسم الرباعي أو رقم الهوية...">
-        <button class="btn-submit" onclick="userSearch()" style="margin-top:0;">فحص البيانات</button>
-        <div id="userRes" style="margin-top:20px;"></div>
-    </div>
-
-    <div id="admin" class="card">
-        <div id="adminAuth">
-            <h3>🔐 دخول الإدارة</h3>
-            <input type="password" id="adminPass" class="search-box" placeholder="كلمة المرور">
-            <button class="btn-submit" onclick="login()">دخول</button>
-        </div>
-        <div id="adminUI" style="display:none;">
-            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
-                <button onclick="downloadExcel()" style="background:#1d6f42; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer;">📥 تحميل كشف Excel (عربي)</button>
-                <input type="text" id="tableSearch" placeholder="بحث فوري في الجدول..." oninput="refreshTable()" style="padding:10px; border-radius:8px; border:1px solid #ccc; width:50%;">
-            </div>
-            <div style="overflow-x:auto;">
-                <table>
-                    <thead>
-                        <tr><th>الأولوية</th><th>الاسم رباعي</th><th>الهوية</th><th>السكن</th><th>الأفراد</th><th>الوظيفة</th><th>إجراء</th></tr>
-                    </thead>
-                    <tbody id="adminBody"></tbody>
-                </table>
-            </div>
+    <div class="admin-login">
+        <button onclick="showLogin()" style="background:none; border:none; color:#64748b; cursor:pointer;">دخول الإدارة (للمسؤول فقط) 🔐</button>
+        <div id="loginBox" style="display:none; margin-top:10px;">
+            <input type="password" id="adminPass" placeholder="أدخل كلمة المرور" style="width:200px;">
+            <button onclick="checkPass()" class="btn" style="width:100px;">دخول</button>
         </div>
     </div>
 
+    <div id="adminSection" class="card">
+        <h3>📊 كشوفات المسجلين (من قاعدة البيانات)</h3>
+        <table id="requestsTable">
+            <thead>
+                <tr>
+                    <th>الاسم</th><th>الهوية</th><th>الجوال</th><th>المنطقة</th><th>التاريخ</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+    </div>
 </div>
 
-<script>
-    const DB_KEY = 'PAL_RELIEF_FULL_SYSTEM_V7';
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // سجل مدني محاكي للربط
-    const MOI_SYNC = {
-        "401111222": {n:"ياسين محمد عبد الله بركة", d:"1985-05-10", s:"متزوج", w:"إيمان بركة"},
-        "901222333": {n:"منى أحمد كمال النجار", d:"1992-11-22", s:"أرملة", w:""}
+    // إعدادات Firebase الخاصة بك
+    const firebaseConfig = {
+        apiKey: "AIzaSyC8PzIvcQ5oV-D3GO1Y3bJ1sWVOhMHTS64",
+        authDomain: "myproject-9e7e8.firebaseapp.com",
+        databaseURL: "https://myproject-9e7e8-default-rtdb.firebaseio.com",
+        projectId: "myproject-9e7e8",
+        storageBucket: "myproject-9e7e8.firebasestorage.app",
+        messagingSenderId: "303472996551",
+        appId: "1:303472996551:web:e009b6824b2a0b44870ee2"
     };
 
-    function showTab(id, btn) {
-        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        btn.classList.add('active');
-    }
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    // الربط مع السجل المدني
-    function syncCivil() {
-        const id = document.getElementById('r_id').value;
-        if(MOI_SYNC[id]) {
-            const u = MOI_SYNC[id];
-            document.getElementById('r_name').value = u.n;
-            document.getElementById('r_dob').value = u.d;
-            document.getElementById('r_social').value = u.s;
-            document.getElementById('r_wife').value = u.w;
-            alert("✅ تم جلب البيانات الرسمية من السجل المدني.");
-        } else { alert("رقم الهوية صحيح رياضياً ولكن غير مدرج في كشوفات الربط الحالية."); }
-    }
-
-    // حفظ البيانات
-    document.getElementById('masterForm').onsubmit = function(e) {
+    // 1. وظيفة الإرسال
+    document.getElementById('regForm').onsubmit = function(e) {
         e.preventDefault();
-        const id = document.getElementById('r_id').value;
-        let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        if(db.find(u => u.id === id)) return alert("❌ هذا الشخص مسجل مسبقاً!");
-
-        const user = {
-            id, 
-            name: document.getElementById('r_name').value,
-            dob: document.getElementById('r_dob').value,
-            gender: document.getElementById('r_gender').value,
-            gov: document.getElementById('r_gov').value,
-            city: document.getElementById('r_city').value,
-            area: document.getElementById('r_area').value,
-            phone: document.getElementById('r_phone').value,
-            social: document.getElementById('r_social').value,
-            fam: document.getElementById('r_fam').value,
-            job: document.getElementById('r_job').value,
-            wife: document.getElementById('r_wife').value,
-            points: (parseInt(document.getElementById('r_fam').value) * 4) + (document.getElementById('r_job').value === 'عاطل عن العمل' ? 25 : 0),
-            history: []
+        const userId = document.getElementById('idCard').value;
+        const data = {
+            name: document.getElementById('name').value,
+            idCard: userId,
+            phone: document.getElementById('phone').value,
+            gov: document.getElementById('gov').value,
+            time: new Date().toLocaleString('ar-EG')
         };
-
-        db.push(user);
-        localStorage.setItem(DB_KEY, JSON.stringify(db));
-        alert("✅ تم التسجيل بنجاح!");
-        this.reset();
+        set(ref(db, 'requests/' + userId), data).then(() => {
+            alert("تم الحفظ!");
+            location.reload();
+        });
     };
 
-    // بحث المستفيد والجمهور (بحث ذكي بالاسم أو الهوية)
-    function userSearch() {
-        const q = document.getElementById('userQuery').value.toLowerCase();
-        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        const u = db.find(x => x.id === q || x.name.toLowerCase().includes(q));
-
-        if(!u) return alert("❌ لم يتم العثور على نتائج للبحث.");
-
-        let html = `<div style="background:#f8fafc; padding:20px; border-radius:15px; border:1px solid #accent">
-            <h3>المستفيد: ${u.name}</h3>
-            <p><b>رقم الهوية:</b> ${u.id} | <b>الحالة:</b> ${u.social}</p>
-            <p><b>العنوان:</b> ${u.gov} - ${u.city} - ${u.area}</p>
-            <hr>
-            <h4>📋 سجل المساعدات المستلمة:</h4>`;
-        
-        if(u.history.length === 0) html += "<p>لا يوجد سجل استلام حتى الآن.</p>";
-        else {
-            html += "<ul>";
-            u.history.forEach(h => html += `<li>${h.type} بتاريخ ${h.date}</li>`);
-            html += "</ul>";
-        }
-        document.getElementById('userRes').innerHTML = html + "</div>";
-    }
-
-    // إدارة المطور
-    function login() {
-        if(document.getElementById('adminPass').value === '123') {
-            document.getElementById('adminAuth').style.display='none';
-            document.getElementById('adminUI').style.display='block';
-            refreshTable();
-        }
-    }
-
-    function refreshTable() {
-        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        const q = document.getElementById('tableSearch').value.toLowerCase();
-        const tbody = document.getElementById('adminBody');
-        tbody.innerHTML = '';
-
-        db.filter(u => u.name.toLowerCase().includes(q) || u.id.includes(q))
-          .sort((a,b) => b.points - a.points).forEach(u => {
-            tbody.innerHTML += `<tr class="${u.points > 40 ? 'priority-high' : ''}">
-                <td>${u.points > 40 ? '🔴 طارئ' : '🟢 عادي'}</td>
-                <td style="font-weight:bold">${u.name}</td>
-                <td>${u.id}</td>
-                <td style="font-size:11px">${u.gov} - ${u.area}</td>
-                <td>${u.fam}</td>
-                <td>${u.job}</td>
-                <td><button onclick="addAid('${u.id}')">+ مساعدة</button></td>
-            </tr>`;
+    // 2. وظيفة جلب البيانات وعرضها في الجدول
+    window.fetchData = function() {
+        const tableBody = document.getElementById('tableBody');
+        onValue(ref(db, 'requests'), (snapshot) => {
+            tableBody.innerHTML = ""; // مسح الجدول القديم
+            snapshot.forEach((childSnapshot) => {
+                const item = childSnapshot.val();
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.idCard}</td>
+                        <td>${item.phone}</td>
+                        <td>${item.gov}</td>
+                        <td>${item.time}</td>
+                    </tr>
+                `;
+            });
         });
-    }
+    };
 
-    function addAid(id) {
-        const type = prompt("نوع المساعدة:");
-        if(!type) return;
-        let db = JSON.parse(localStorage.getItem(DB_KEY));
-        const i = db.findIndex(u => u.id === id);
-        db[i].history.push({type, date: new Date().toLocaleDateString('ar-EG')});
-        localStorage.setItem(DB_KEY, JSON.stringify(db));
-        refreshTable();
-    }
-
-    // تصدير الإكسل مع حل مشكلة الأحرف العربية
-    function downloadExcel() {
-        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
-        let csv = "\uFEFF"; // BOM لـ Excel
-        csv += "الاسم رباعي,الهوية,الجوال,المحافظة,المدينة,الحي,عدد الأفراد,الوظيفة,النقاط\n";
-        db.forEach(u => {
-            csv += `"${u.name}","${u.id}","${u.phone}","${u.gov}","${u.city}","${u.area}","${u.fam}","${u.job}","${u.points}"\n`;
-        });
-        const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = 'كشف_المستفيدين_الكامل.csv';
-        link.click();
-    }
+    // وظائف التحكم في العرض
+    window.showLogin = () => document.getElementById('loginBox').style.display='block';
+    window.checkPass = () => {
+        if(document.getElementById('adminPass').value === "123") { // كلمة المرور هنا 123
+            document.getElementById('adminSection').style.display='block';
+            document.getElementById('formCard').style.display='none';
+            fetchData(); // جلب البيانات عند الدخول
+        } else {
+            alert("كلمة مرور خاطئة!");
+        }
+    };
 </script>
 </body>
 </html>
