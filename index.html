@@ -3,72 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مؤسسة الإنسان أولاً - الإدارة</title>
+    <title>منظومة الإغاثة المتكاملة | م. الإنسان أولاً</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #0f172a; --accent: #2563eb; --bg: #f1f5f9; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; }
-        header { background: var(--primary); color: white; padding: 20px; text-align: center; }
-        .container { max-width: 900px; margin: 20px auto; padding: 20px; }
-        .card { background: white; padding: 25px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
-        input, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .btn { background: var(--accent); color: white; padding: 12px; border: none; border-radius: 8px; width: 100%; cursor: pointer; font-weight: bold; }
+        :root { --main: #0f172a; --blue: #2563eb; --green: #10b981; --red: #ef4444; --gray: #f8fafc; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--gray); margin: 0; color: #1e293b; }
         
-        /* تنسيق جدول البيانات */
-        #adminSection { display: none; margin-top: 30px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; font-size: 14px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-        th { background: var(--primary); color: white; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        .admin-login { border-top: 2px dashed #ccc; padding-top: 20px; text-align: center; }
+        /* Navbar & Header */
+        nav { background: var(--main); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; }
+        .logo { font-weight: bold; font-size: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        .hero { background: linear-gradient(135deg, var(--main), var(--blue)); color: white; padding: 40px 20px; text-align: center; }
+        
+        .container { max-width: 1200px; margin: -30px auto 40px; padding: 0 20px; }
+        
+        /* Cards */
+        .card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        
+        /* Inputs & Forms */
+        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; transition: 0.3s; }
+        input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        
+        .btn { padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-main { background: var(--blue); color: white; width: 100%; justify-content: center; margin-top: 15px; }
+        .btn-export { background: var(--green); color: white; }
+        
+        /* Admin Section & Tables */
+        #adminArea { display: none; animation: fadeIn 0.5s; }
+        .search-bar { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-bar input { flex: 2; min-width: 250px; }
+        
+        .table-res { overflow-x: auto; border-radius: 10px; }
+        table { width: 100%; border-collapse: collapse; background: white; min-width: 900px; }
+        th { background: #f1f5f9; color: #475569; padding: 15px; text-align: center; font-size: 13px; }
+        td { padding: 12px; border-bottom: 1px solid #f1f5f9; text-align: center; font-size: 13px; }
+        
+        .badge { padding: 4px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .badge-gov { background: #dcfce7; color: #166534; }
+        
+        .action-btns { display: flex; gap: 5px; justify-content: center; }
+        .btn-sm { padding: 5px 10px; font-size: 12px; border-radius: 5px; color: white; border: none; cursor: pointer; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media (max-width: 768px) { .grid-form { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>مؤسسة الإنسان أولاً</h1>
-    <p>نظام التسجيل السحابي المباشر</p>
-</header>
+<nav>
+    <div class="logo"><i class="fas fa-hand-holding-heart"></i> م. الإنسان أولاً</div>
+    <button onclick="toggleAdmin()" class="btn" style="background:rgba(255,255,255,0.1); color:white;"><i class="fas fa-user-shield"></i> لوحة التحكم</button>
+</nav>
+
+<div class="hero">
+    <h2>نظام إدارة المساعدات الإنسانية - غزة</h2>
+    <p>بوابة التسجيل والتدقيق السحابية الموحدة</p>
+</div>
 
 <div class="container">
-    <div class="card" id="formCard">
-        <h3>📝 تسجيل طلب مساعدة جديد</h3>
+    <div id="userSection" class="card">
+        <h3><i class="fas fa-file-signature"></i> تسجيل طلب مستفيد جديد</h3>
         <form id="regForm">
-            <input type="text" id="name" placeholder="الاسم الرباعي" required>
-            <input type="number" id="idCard" placeholder="رقم الهوية" required>
-            <input type="number" id="phone" placeholder="رقم الجوال" required>
-            <select id="gov">
-                <option>شمال غزة</option><option>غزة</option><option>الوسطى</option><option>خانيونس</option><option>رفح</option>
-            </select>
-            <input type="number" id="famCount" placeholder="عدد الأفراد" required>
-            <button type="submit" id="submitBtn" class="btn">إرسال الطلب ✅</button>
+            <div class="grid-form">
+                <div><label>الاسم الرباعي</label><input type="text" id="name" required></div>
+                <div><label>رقم الهوية</label><input type="number" id="idCard" required></div>
+                <div><label>رقم الجوال</label><input type="number" id="phone" required></div>
+                <div><label>المحافظة</label>
+                    <select id="gov">
+                        <option>شمال غزة</option><option>غزة</option><option>الوسطى</option><option>خانيونس</option><option>رفح</option>
+                    </select>
+                </div>
+                <div><label>عدد أفراد الأسرة</label><input type="number" id="famCount" required></div>
+                <div><label>نوع المساعدة</label>
+                    <select id="aidType">
+                        <option>طرد غذائي</option><option>مساعدة مالية</option><option>خيمة/إيواء</option><option>علاج طبي</option>
+                    </select>
+                </div>
+            </div>
+            <div style="margin-top:15px;"><label>العنوان بالتفصيل</label><textarea id="address" rows="2"></textarea></div>
+            <button type="submit" id="submitBtn" class="btn btn-main"><i class="fas fa-paper-plane"></i> إرسال الطلب وحفظه سحابياً</button>
         </form>
     </div>
 
-    <div class="admin-login">
-        <button onclick="showLogin()" style="background:none; border:none; color:#64748b; cursor:pointer;">دخول الإدارة (للمسؤول فقط) 🔐</button>
-        <div id="loginBox" style="display:none; margin-top:10px;">
-            <input type="password" id="adminPass" placeholder="أدخل كلمة المرور" style="width:200px;">
-            <button onclick="checkPass()" class="btn" style="width:100px;">دخول</button>
+    <div id="adminArea">
+        <div class="card" style="background: var(--main); color:white;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h3><i class="fas fa-chart-line"></i> لوحة إدارة المطور</h3>
+                <button onclick="exportToExcel()" class="btn btn-export"><i class="fas fa-file-excel"></i> تصدير البيانات (Excel)</button>
+            </div>
+            <p>إجمالي المسجلين: <span id="totalCount" style="font-size:24px; color:var(--green);">0</span> مستفيد</p>
         </div>
-    </div>
 
-    <div id="adminSection" class="card">
-        <h3>📊 كشوفات المسجلين (من قاعدة البيانات)</h3>
-        <table id="requestsTable">
-            <thead>
-                <tr>
-                    <th>الاسم</th><th>الهوية</th><th>الجوال</th><th>المنطقة</th><th>التاريخ</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody">
-                </tbody>
-        </table>
+        <div class="card">
+            <h3><i class="fas fa-search"></i> نظام البحث الذكي</h3>
+            <div class="search-bar">
+                <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="ابحث بالاسم، رقم الهوية، أو المحافظة...">
+                <select id="filterGov" onchange="searchTable()">
+                    <option value="">كل المناطق</option><option>شمال غزة</option><option>غزة</option><option>الوسطى</option><option>خانيونس</option><option>رفح</option>
+                </select>
+            </div>
+
+            <div class="table-res">
+                <table id="requestsTable">
+                    <thead>
+                        <tr>
+                            <th>الاسم الكامل</th><th>الهوية</th><th>الجوال</th><th>المنطقة</th><th>المساعدة</th><th>التاريخ</th><th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
@@ -84,53 +138,93 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // 1. وظيفة الإرسال
-    document.getElementById('regForm').onsubmit = function(e) {
+    // حفظ البيانات
+    document.getElementById('regForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        const userId = document.getElementById('idCard').value;
+        const id = document.getElementById('idCard').value;
         const data = {
             name: document.getElementById('name').value,
-            idCard: userId,
+            idCard: id,
             phone: document.getElementById('phone').value,
             gov: document.getElementById('gov').value,
-            time: new Date().toLocaleString('ar-EG')
+            famCount: document.getElementById('famCount').value,
+            aidType: document.getElementById('aidType').value,
+            address: document.getElementById('address').value,
+            date: new Date().toLocaleString('ar-EG')
         };
-        set(ref(db, 'requests/' + userId), data).then(() => {
-            alert("تم الحفظ!");
-            location.reload();
+        set(ref(db, 'requests/' + id), data).then(() => {
+            alert("✅ تم تسجيل بياناتك بنجاح في السحابة.");
+            document.getElementById('regForm').reset();
         });
-    };
+    });
 
-    // 2. وظيفة جلب البيانات وعرضها في الجدول
-    window.fetchData = function() {
-        const tableBody = document.getElementById('tableBody');
+    // جلب البيانات للمطور
+    window.loadData = () => {
         onValue(ref(db, 'requests'), (snapshot) => {
-            tableBody.innerHTML = ""; // مسح الجدول القديم
-            snapshot.forEach((childSnapshot) => {
-                const item = childSnapshot.val();
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = "";
+            let count = 0;
+            snapshot.forEach((child) => {
+                const item = child.val();
+                count++;
                 tableBody.innerHTML += `
                     <tr>
-                        <td>${item.name}</td>
+                        <td style="font-weight:600">${item.name}</td>
                         <td>${item.idCard}</td>
                         <td>${item.phone}</td>
-                        <td>${item.gov}</td>
-                        <td>${item.time}</td>
-                    </tr>
-                `;
+                        <td><span class="badge badge-gov">${item.gov}</span></td>
+                        <td>${item.aidType}</td>
+                        <td style="font-size:10px">${item.date}</td>
+                        <td class="action-btns">
+                            <button onclick="deleteRecord('${item.idCard}')" class="btn-sm" style="background:var(--red)"><i class="fas fa-trash"></i></button>
+                            <button onclick="window.print()" class="btn-sm" style="background:var(--main)"><i class="fas fa-print"></i></button>
+                        </td>
+                    </tr>`;
             });
+            document.getElementById('totalCount').innerText = count;
         });
     };
 
-    // وظائف التحكم في العرض
-    window.showLogin = () => document.getElementById('loginBox').style.display='block';
-    window.checkPass = () => {
-        if(document.getElementById('adminPass').value === "123") { // كلمة المرور هنا 123
-            document.getElementById('adminSection').style.display='block';
-            document.getElementById('formCard').style.display='none';
-            fetchData(); // جلب البيانات عند الدخول
-        } else {
-            alert("كلمة مرور خاطئة!");
+    // نظام البحث
+    window.searchTable = () => {
+        const input = document.getElementById("searchInput").value.toUpperCase();
+        const filterGov = document.getElementById("filterGov").value;
+        const tr = document.getElementById("tableBody").getElementsByTagName("tr");
+        
+        for (let i = 0; i < tr.length; i++) {
+            const tdName = tr[i].getElementsByTagName("td")[0];
+            const tdID = tr[i].getElementsByTagName("td")[1];
+            const tdGov = tr[i].getElementsByTagName("td")[3];
+            
+            if (tdName || tdID) {
+                const txtName = tdName.textContent || tdName.innerText;
+                const txtID = tdID.textContent || tdID.innerText;
+                const txtGov = tdGov.textContent || tdGov.innerText;
+                
+                const matchesSearch = txtName.toUpperCase().indexOf(input) > -1 || txtID.indexOf(input) > -1;
+                const matchesGov = filterGov === "" || txtGov.indexOf(filterGov) > -1;
+                
+                tr[i].style.display = matchesSearch && matchesGov ? "" : "none";
+            }
         }
+    };
+
+    window.deleteRecord = (id) => {
+        if(confirm("هل تريد حذف هذا المستفيد نهائياً؟")) remove(ref(db, 'requests/' + id));
+    };
+
+    window.toggleAdmin = () => {
+        const pass = prompt("أدخل كلمة مرور المطور:");
+        if (pass === "123") {
+            document.getElementById('adminArea').style.display = 'block';
+            document.getElementById('userSection').style.display = 'none';
+            loadData();
+        } else { alert("عذراً، لا تملك الصلاحية."); }
+    };
+
+    window.exportToExcel = () => {
+        const wb = XLSX.utils.table_to_book(document.getElementById('requestsTable'));
+        XLSX.writeFile(wb, 'كشوفات_المستفيدين_الكلية.xlsx');
     };
 </script>
 </body>
