@@ -1,205 +1,273 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>تخزين بيانات عائلة عبد النبي</title>
-<style>
-body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg,#0f2027,#203a43,#2c5364); color: #fff; margin:0; padding:0;}
-header { text-align:center; padding:25px; font-size:2em; background:linear-gradient(90deg,#ff4e00,#f9d423); color:#1a1a2e; border-bottom:3px solid #f9d423;}
-main { max-width:950px; margin:20px auto; padding:20px; background:rgba(255,255,255,0.05); border-radius:15px; box-shadow:0 0 15px rgba(0,0,0,0.5);}
-section { display:none; }
-input, button, select { padding:10px; margin:8px 0; border-radius:8px; border:none; width:100%; box-sizing:border-box;}
-button { background:linear-gradient(90deg,#f9d423,#ff4e00); color:#1a1a2e; font-weight:bold; cursor:pointer; transition:0.3s; }
-button:hover { opacity:0.9; transform:scale(1.03);}
-table { width:100%; border-collapse: collapse; margin-top:15px; background:rgba(0,0,0,0.3);}
-th, td { border:1px solid #f9d423; padding:8px; text-align:center; }
-img.userPic { max-width:80px; border-radius:50%; }
-h2,h3 { text-align:center; margin-bottom:15px;}
-nav { text-align:center; margin-bottom:20px;}
-nav button { width:auto; margin:5px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التسجيل لمساعدات الاغاثية لسكان القطاع </title>
+    <style>
+        :root { --primary: #0f172a; --accent: #2563eb; --success: #16a34a; --bg: #f1f5f9; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--bg); margin: 0; color: #334155; }
+        header { background: var(--primary); color: white; padding: 20px; text-align: center; border-bottom: 4px solid var(--accent); }
+        nav { display: flex; justify-content: center; background: white; padding: 10px; gap: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); sticky: top; }
+        nav button { padding: 12px 25px; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; background: #e2e8f0; transition: 0.3s; }
+        nav button.active { background: var(--accent); color: white; }
+        
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        .card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); display: none; }
+        .active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        h3 { border-right: 5px solid var(--accent); padding-right: 15px; color: var(--primary); margin-top: 30px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+        .field { display: flex; flex-direction: column; }
+        label { font-size: 14px; font-weight: bold; margin-bottom: 8px; }
+        input, select { padding: 12px; border: 1.5px solid #cbd5e1; border-radius: 10px; font-size: 15px; outline: none; }
+        input:focus { border-color: var(--accent); }
+        
+        .btn-submit { background: var(--accent); color: white; padding: 18px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; width: 100%; font-size: 18px; margin-top: 25px; }
+        .btn-sync { background: #334155; color: white; padding: 8px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; margin-top: 5px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: white; }
+        th, td { padding: 15px; border: 1px solid #e2e8f0; text-align: center; }
+        th { background: #f8fafc; color: var(--primary); }
+        .priority-high { border-right: 8px solid #ef4444; background: #fef2f2; }
+        
+        .search-box { width: 100%; padding: 15px; margin-bottom: 20px; border-radius: 10px; border: 2px solid var(--accent); font-size: 16px; box-sizing: border-box; }
+    </style>
 </head>
 <body>
 
-<header>تخزين بيانات عائلة عبد النبي</header>
-
-<main>
+<header>
+    <h1>التسجيل في مؤسسة الانسان اولا</h1>
+    <p>نظام الربط مع السجل المدني وإدارة الاستحقاق</p>
+</header>
 
 <nav>
-  <button onclick="showSection('userRegisterPage')">تسجيل مستخدم</button>
-  <button onclick="showSection('devLoginPage')">دخول المطور</button>
+    <button class="active" onclick="showTab('reg', this)">📝 تسجيل مستفيد</button>
+    <button onclick="showTab('search', this)">🔍 استعلام الجمهور</button>
+    <button onclick="showTab('admin', this)">🛠️ لوحة المطور</button>
 </nav>
 
-<!-- صفحة تسجيل المستخدم -->
-<section id="userRegisterPage" style="display:block;">
-  <h2>تسجيل المستخدم</h2>
-  <input type="text" id="fullName" placeholder="الاسم رباعي">
-  <input type="text" id="phone" placeholder="رقم الهاتف">
-  <input type="text" id="idNumber" placeholder="رقم الهوية">
-  <input type="text" id="wifeName" placeholder="اسم الزوجة">
-  <input type="text" id="wifeId" placeholder="رقم هوية الزوجة">
-  <input type="number" id="childrenCount" placeholder="عدد الأولاد">
-  <input type="text" id="residence" placeholder="مكان السكن">
-  <input type="file" id="photo" accept="image/*">
-  <button id="registerUser">تسجيل</button>
-  <p id="registerMsg" style="color:yellow;"></p>
-</section>
+<div class="container">
 
-<!-- صفحة عرض بيانات المستخدم -->
-<section id="userPage">
-  <h2>بياناتك الشخصية</h2>
-  <div id="userInfo"></div>
-  <button onclick="backToRegister()">عودة للتسجيل</button>
-</section>
+    <div id="reg" class="card active">
+        <h3>1. البيانات الأساسية (من السجل المدني)</h3>
+        <form id="masterForm">
+            <div class="grid">
+                <div class="field">
+                    <label>رقم الهوية</label>
+                    <input type="number" id="r_id" oninput="if(this.value.length>9)this.value=this.value.slice(0,9)" placeholder="أدخل 9 أرقام" required>
+                    <button type="button" class="btn-sync" onclick="syncCivil()">🔗 جلب بيانات الداخلية</button>
+                </div>
+                <div class="field"><label>الاسم رباعي</label><input type="text" id="r_name" placeholder="الاسم كما في الهوية" required></div>
+                <div class="field"><label>تاريخ الميلاد</label><input type="date" id="r_dob" required></div>
+                <div class="field">
+                    <label>الجنس</label>
+                    <select id="r_gender"><option>ذكر</option><option>أنثى</option></select>
+                </div>
+            </div>
 
-<!-- صفحة تسجيل دخول المطور -->
-<section id="devLoginPage">
-  <h2>دخول المطور</h2>
-  <input type="password" id="devPass" placeholder="كلمة مرور المطور">
-  <button id="loginDev">دخول</button>
-  <p id="devError" style="color:red;"></p>
-</section>
+            <h3>2. تفاصيل السكن والتواصل</h3>
+            <div class="grid">
+                <div class="field">
+                    <label>المحافظة</label>
+                    <select id="r_gov">
+                        <option>شمال غزة</option><option>غزة</option><option>الوسطى</option><option>خانيونس</option><option>رفح</option>
+                    </select>
+                </div>
+                <div class="field"><label>المدينة / المخيم</label><input type="text" id="r_city" required></div>
+                <div class="field"><label>الحي / الشارع</label><input type="text" id="r_area" required></div>
+                <div class="field"><label>رقم الجوال</label><input type="number" id="r_phone" required></div>
+            </div>
 
-<!-- صفحة المطور -->
-<section id="developerPage">
-  <h2>صفحة المطور</h2>
-  <div><strong>اسم المطور:</strong> عبد السلام مازن عطوة عبد النبي</div>
-  <div><strong>رقم الهاتف:</strong> 0597498394</div>
+            <h3>3. الحالة الاجتماعية والاقتصادية</h3>
+            <div class="grid">
+                <div class="field">
+                    <label>الحالة الاجتماعية</label>
+                    <select id="r_social"><option>متزوج</option><option>أعزب</option><option>أرمل</option><option>مطلق</option></select>
+                </div>
+                <div class="field"><label>عدد أفراد الأسرة</label><input type="number" id="r_fam" min="1" required></div>
+                <div class="field">
+                    <label>الوظيفة</label>
+                    <select id="r_job">
+                        <option>عاطل عن العمل</option><option>عامل مياومة</option><option>خريج بلا عمل</option>
+                        <option>موظف (غزة)</option><option>موظف (رام الله)</option><option>قطاع خاص</option>
+                        <option>متقاعد</option><option>أخرى</option>
+                    </select>
+                </div>
+                <div class="field"><label>اسم الزوجة (إن وجد)</label><input type="text" id="r_wife"></div>
+            </div>
+            <button type="submit" class="btn-submit">حفظ الطلب في قاعدة البيانات ✅</button>
+        </form>
+    </div>
 
-  <h3>بيانات المسجلين</h3>
-  <table id="usersTable">
-    <tr>
-      <th>الاسم</th>
-      <th>الهاتف</th>
-      <th>الهوية</th>
-      <th>اسم الزوجة</th>
-      <th>هوية الزوجة</th>
-      <th>عدد الأولاد</th>
-      <th>مكان السكن</th>
-      <th>صورة</th>
-    </tr>
-  </table>
-  <button onclick="logoutDev()">تسجيل خروج</button>
-  <button onclick="downloadPDF()">تحميل PDF</button>
-</section>
+    <div id="search" class="card">
+        <h3>🔍 استعلام عن مستفيد</h3>
+        <input type="text" id="userQuery" class="search-box" placeholder="ابحث بكتابة الاسم الرباعي أو رقم الهوية...">
+        <button class="btn-submit" onclick="userSearch()" style="margin-top:0;">فحص البيانات</button>
+        <div id="userRes" style="margin-top:20px;"></div>
+    </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <div id="admin" class="card">
+        <div id="adminAuth">
+            <h3>🔐 دخول الإدارة</h3>
+            <input type="password" id="adminPass" class="search-box" placeholder="كلمة المرور">
+            <button class="btn-submit" onclick="login()">دخول</button>
+        </div>
+        <div id="adminUI" style="display:none;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                <button onclick="downloadExcel()" style="background:#1d6f42; color:white; border:none; padding:10px; border-radius:8px; cursor:pointer;">📥 تحميل كشف Excel (عربي)</button>
+                <input type="text" id="tableSearch" placeholder="بحث فوري في الجدول..." oninput="refreshTable()" style="padding:10px; border-radius:8px; border:1px solid #ccc; width:50%;">
+            </div>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr><th>الأولوية</th><th>الاسم رباعي</th><th>الهوية</th><th>السكن</th><th>الأفراد</th><th>الوظيفة</th><th>إجراء</th></tr>
+                    </thead>
+                    <tbody id="adminBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
 <script>
-const users = [];
+    const DB_KEY = 'PAL_RELIEF_FULL_SYSTEM_V7';
 
-function showSection(sectionId){
-  document.querySelectorAll('section').forEach(sec=>sec.style.display='none');
-  document.getElementById(sectionId).style.display='block';
-}
+    // سجل مدني محاكي للربط
+    const MOI_SYNC = {
+        "401111222": {n:"ياسين محمد عبد الله بركة", d:"1985-05-10", s:"متزوج", w:"إيمان بركة"},
+        "901222333": {n:"منى أحمد كمال النجار", d:"1992-11-22", s:"أرملة", w:""}
+    };
 
-// تسجيل مستخدم
-document.getElementById('registerUser').addEventListener('click', ()=>{
-  const fullName = document.getElementById('fullName').value;
-  const phone = document.getElementById('phone').value;
-  const idNumber = document.getElementById('idNumber').value;
-  const wifeName = document.getElementById('wifeName').value;
-  const wifeId = document.getElementById('wifeId').value;
-  const childrenCount = document.getElementById('childrenCount').value;
-  const residence = document.getElementById('residence').value;
-  const photoFile = document.getElementById('photo').files[0];
+    function showTab(id, btn) {
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        btn.classList.add('active');
+    }
 
-  if(!fullName || !phone || !idNumber || !wifeName || !wifeId || !childrenCount || !residence || !photoFile){
-    document.getElementById('registerMsg').innerText = "يرجى ملء كل الحقول!";
-    return;
-  }
+    // الربط مع السجل المدني
+    function syncCivil() {
+        const id = document.getElementById('r_id').value;
+        if(MOI_SYNC[id]) {
+            const u = MOI_SYNC[id];
+            document.getElementById('r_name').value = u.n;
+            document.getElementById('r_dob').value = u.d;
+            document.getElementById('r_social').value = u.s;
+            document.getElementById('r_wife').value = u.w;
+            alert("✅ تم جلب البيانات الرسمية من السجل المدني.");
+        } else { alert("رقم الهوية صحيح رياضياً ولكن غير مدرج في كشوفات الربط الحالية."); }
+    }
 
-  const reader = new FileReader();
-  reader.onload = function(e){
-    const user = {fullName, phone, idNumber, wifeName, wifeId, childrenCount, residence, photo:e.target.result};
-    users.push(user);
+    // حفظ البيانات
+    document.getElementById('masterForm').onsubmit = function(e) {
+        e.preventDefault();
+        const id = document.getElementById('r_id').value;
+        let db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        if(db.find(u => u.id === id)) return alert("❌ هذا الشخص مسجل مسبقاً!");
 
-    // عرض بيانات المستخدم
-    showSection('userPage');
-    document.getElementById('userInfo').innerHTML = `
-      <p><strong>الاسم:</strong> ${fullName}</p>
-      <p><strong>الهاتف:</strong> ${phone}</p>
-      <p><strong>رقم الهوية:</strong> ${idNumber}</p>
-      <p><strong>اسم الزوجة:</strong> ${wifeName}</p>
-      <p><strong>هوية الزوجة:</strong> ${wifeId}</p>
-      <p><strong>عدد الأولاد:</strong> ${childrenCount}</p>
-      <p><strong>مكان السكن:</strong> ${residence}</p>
-      <img src="${e.target.result}" class="userPic">
-    `;
-    document.getElementById('registerMsg').innerText='';
-  };
-  reader.readAsDataURL(photoFile);
-});
+        const user = {
+            id, 
+            name: document.getElementById('r_name').value,
+            dob: document.getElementById('r_dob').value,
+            gender: document.getElementById('r_gender').value,
+            gov: document.getElementById('r_gov').value,
+            city: document.getElementById('r_city').value,
+            area: document.getElementById('r_area').value,
+            phone: document.getElementById('r_phone').value,
+            social: document.getElementById('r_social').value,
+            fam: document.getElementById('r_fam').value,
+            job: document.getElementById('r_job').value,
+            wife: document.getElementById('r_wife').value,
+            points: (parseInt(document.getElementById('r_fam').value) * 4) + (document.getElementById('r_job').value === 'عاطل عن العمل' ? 25 : 0),
+            history: []
+        };
 
-function backToRegister(){
-  showSection('userRegisterPage');
-  document.querySelectorAll('#userRegisterPage input').forEach(i=>i.value='');
-  document.getElementById('registerMsg').innerText='';
-}
+        db.push(user);
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+        alert("✅ تم التسجيل بنجاح!");
+        this.reset();
+    };
 
-// دخول المطور
-document.getElementById('loginDev').addEventListener('click', ()=>{
-  const pass = document.getElementById('devPass').value;
-  if(pass==='abd20052005'){
-    showSection('developerPage');
-    updateUsersTable();
-    document.getElementById('devError').innerText='';
-  } else {
-    document.getElementById('devError').innerText='كلمة المرور غير صحيحة!';
-  }
-});
+    // بحث المستفيد والجمهور (بحث ذكي بالاسم أو الهوية)
+    function userSearch() {
+        const q = document.getElementById('userQuery').value.toLowerCase();
+        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        const u = db.find(x => x.id === q || x.name.toLowerCase().includes(q));
 
-function logoutDev(){
-  showSection('devLoginPage');
-  document.getElementById('devPass').value='';
-}
+        if(!u) return alert("❌ لم يتم العثور على نتائج للبحث.");
 
-function updateUsersTable(){
-  const table = document.getElementById('usersTable');
-  table.innerHTML = `<tr>
-      <th>الاسم</th><th>الهاتف</th><th>الهوية</th>
-      <th>اسم الزوجة</th><th>هوية الزوجة</th>
-      <th>عدد الأولاد</th><th>مكان السكن</th><th>صورة</th>
-    </tr>`;
-  users.forEach(u=>{
-    const row = table.insertRow();
-    row.insertCell(0).innerText = u.fullName;
-    row.insertCell(1).innerText = u.phone;
-    row.insertCell(2).innerText = u.idNumber;
-    row.insertCell(3).innerText = u.wifeName;
-    row.insertCell(4).innerText = u.wifeId;
-    row.insertCell(5).innerText = u.childrenCount;
-    row.insertCell(6).innerText = u.residence;
-    const imgCell = row.insertCell(7);
-    const img = document.createElement('img');
-    img.src = u.photo;
-    img.className = 'userPic';
-    imgCell.appendChild(img);
-  });
-}
+        let html = `<div style="background:#f8fafc; padding:20px; border-radius:15px; border:1px solid #accent">
+            <h3>المستفيد: ${u.name}</h3>
+            <p><b>رقم الهوية:</b> ${u.id} | <b>الحالة:</b> ${u.social}</p>
+            <p><b>العنوان:</b> ${u.gov} - ${u.city} - ${u.area}</p>
+            <hr>
+            <h4>📋 سجل المساعدات المستلمة:</h4>`;
+        
+        if(u.history.length === 0) html += "<p>لا يوجد سجل استلام حتى الآن.</p>";
+        else {
+            html += "<ul>";
+            u.history.forEach(h => html += `<li>${h.type} بتاريخ ${h.date}</li>`);
+            html += "</ul>";
+        }
+        document.getElementById('userRes').innerHTML = html + "</div>";
+    }
 
-// تحميل PDF
-function downloadPDF(){
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  let y = 10;
-  doc.setFontSize(16);
-  doc.text("بيانات عائلة عبد النبي", 105, y, null, null, "center");
-  y += 10;
-  users.forEach((u,i)=>{
-    doc.setFontSize(12);
-    doc.text(`المستخدم ${i+1}:`, 10, y); y+=6;
-    doc.text(`الاسم: ${u.fullName}`, 10, y); y+=6;
-    doc.text(`الهاتف: ${u.phone}`, 10, y); y+=6;
-    doc.text(`رقم الهوية: ${u.idNumber}`, 10, y); y+=6;
-    doc.text(`اسم الزوجة: ${u.wifeName}`, 10, y); y+=6;
-    doc.text(`هوية الزوجة: ${u.wifeId}`, 10, y); y+=6;
-    doc.text(`عدد الأولاد: ${u.childrenCount}`, 10, y); y+=6;
-    doc.text(`مكان السكن: ${u.residence}`, 10, y); y+=10;
-    if(y>270){ doc.addPage(); y=10;}
-  });
-  doc.save('FamilyData.pdf');
-}
+    // إدارة المطور
+    function login() {
+        if(document.getElementById('adminPass').value === '123') {
+            document.getElementById('adminAuth').style.display='none';
+            document.getElementById('adminUI').style.display='block';
+            refreshTable();
+        }
+    }
+
+    function refreshTable() {
+        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        const q = document.getElementById('tableSearch').value.toLowerCase();
+        const tbody = document.getElementById('adminBody');
+        tbody.innerHTML = '';
+
+        db.filter(u => u.name.toLowerCase().includes(q) || u.id.includes(q))
+          .sort((a,b) => b.points - a.points).forEach(u => {
+            tbody.innerHTML += `<tr class="${u.points > 40 ? 'priority-high' : ''}">
+                <td>${u.points > 40 ? '🔴 طارئ' : '🟢 عادي'}</td>
+                <td style="font-weight:bold">${u.name}</td>
+                <td>${u.id}</td>
+                <td style="font-size:11px">${u.gov} - ${u.area}</td>
+                <td>${u.fam}</td>
+                <td>${u.job}</td>
+                <td><button onclick="addAid('${u.id}')">+ مساعدة</button></td>
+            </tr>`;
+        });
+    }
+
+    function addAid(id) {
+        const type = prompt("نوع المساعدة:");
+        if(!type) return;
+        let db = JSON.parse(localStorage.getItem(DB_KEY));
+        const i = db.findIndex(u => u.id === id);
+        db[i].history.push({type, date: new Date().toLocaleDateString('ar-EG')});
+        localStorage.setItem(DB_KEY, JSON.stringify(db));
+        refreshTable();
+    }
+
+    // تصدير الإكسل مع حل مشكلة الأحرف العربية
+    function downloadExcel() {
+        const db = JSON.parse(localStorage.getItem(DB_KEY)) || [];
+        let csv = "\uFEFF"; // BOM لـ Excel
+        csv += "الاسم رباعي,الهوية,الجوال,المحافظة,المدينة,الحي,عدد الأفراد,الوظيفة,النقاط\n";
+        db.forEach(u => {
+            csv += `"${u.name}","${u.id}","${u.phone}","${u.gov}","${u.city}","${u.area}","${u.fam}","${u.job}","${u.points}"\n`;
+        });
+        const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = 'كشف_المستفيدين_الكامل.csv';
+        link.click();
+    }
 </script>
 </body>
 </html>
