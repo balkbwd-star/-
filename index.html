@@ -16,16 +16,13 @@
         .page { display: none; animation: fadeIn 0.4s ease; }
         .active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* تنسيق الخانات الجديد */
         .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px; margin-bottom: 20px; }
         .input-group { display: flex; flex-direction: column; }
         label { margin-bottom: 5px; font-weight: 600; font-size: 13px; color: var(--main); }
         input, select, textarea { padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 14px; }
-        
-        .btn { padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 10px; justify-content: center; }
+        .btn { padding: 14px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 10px; justify-content: center; transition: 0.3s; }
         .btn-blue { background: var(--blue); color: white; width: 100%; font-size: 17px; }
-        
+        .btn-blue:disabled { background: #94a3b8; cursor: not-allowed; }
         .stats-bar { display: flex; justify-content: space-between; align-items: center; background: var(--main); color: white; padding: 15px 25px; border-radius: 15px; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; min-width: 1200px; }
         th { background: #f1f5f9; padding: 12px; font-size: 12px; }
@@ -35,7 +32,7 @@
 <body>
 
 <nav>
-    <div class="logo" onclick="location.reload()"><i class="fas fa-hand-holding-heart"></i> مؤسسة الإنسان أولاً</div>
+    <div class="logo" style="cursor:pointer" onclick="location.reload()"><i class="fas fa-hand-holding-heart"></i> مؤسسة الإنسان أولاً</div>
     <button onclick="showPage('loginPage')" class="btn" style="background:rgba(255,255,255,0.1); color:white; font-size:12px;">لوحة المطور</button>
 </nav>
 
@@ -45,7 +42,6 @@
 </div>
 
 <div class="container">
-    
     <div id="registerPage" class="page active card">
         <h3 style="margin-top:0"><i class="fas fa-edit"></i> نموذج تسجيل مستفيد شامل</h3>
         <form id="fullForm">
@@ -54,21 +50,18 @@
                 <div class="input-group"><label>رقم الهوية</label><input type="number" id="idCard" required></div>
                 <div class="input-group"><label>رقم الجوال الأساسي</label><input type="number" id="phone1" required></div>
                 <div class="input-group"><label>رقم جوال بديل</label><input type="number" id="phone2"></div>
-                
                 <div class="input-group"><label>المحافظة</label>
                     <select id="gov">
                         <option>شمال غزة</option><option>غزة</option><option>الوسطى</option><option>خانيونس</option><option>رفح</option>
                     </select>
                 </div>
                 <div class="input-group"><label>مكان النزوح الحالي</label><input type="text" id="currentLoc" placeholder="اسم المدرسة أو المخيم" required></div>
-                
                 <div class="input-group"><label>عدد أفراد الأسرة</label><input type="number" id="famCount" required></div>
                 <div class="input-group"><label>الحالة الاجتماعية</label>
                     <select id="socialStatus">
                         <option>معيل (أب)</option><option>أرملة</option><option>مطلقة</option><option>أعزب</option>
                     </select>
                 </div>
-
                 <div class="input-group"><label>هل يوجد ذوي احتياجات خاصة؟</label>
                     <select id="disability">
                         <option>لا يوجد</option><option>نعم - إعاقة حركية</option><option>نعم - مرض مزمن</option>
@@ -79,7 +72,6 @@
                         <option>خيمة</option><option>مركز إيواء</option><option>منزل مستأجر</option><option>عند أقارب</option>
                     </select>
                 </div>
-
                 <div class="input-group"><label>نوع المساعدة المطلوبة</label>
                     <select id="aidType">
                         <option>طرد غذائي</option><option>مساعدة نقدية</option><option>خيمة</option><option>منظفات</option>
@@ -87,9 +79,7 @@
                 </div>
                 <div class="input-group"><label>الدخل الشهري الحالي</label><input type="text" id="income" placeholder="مثلاً: لا يوجد"></div>
             </div>
-            
             <div class="input-group"><label>العنوان التفصيلي وملاحظات إضافية</label><textarea id="address" rows="3" required></textarea></div>
-            
             <button type="submit" class="btn btn-blue" id="sendBtn" style="margin-top:20px;">إرسال الطلب وحفظ البيانات ✅</button>
         </form>
     </div>
@@ -97,22 +87,22 @@
     <div id="successPage" class="page card" style="text-align:center;">
         <i class="fas fa-check-circle" style="font-size:70px; color:var(--green);"></i>
         <h2>تم حفظ بياناتك بنجاح</h2>
-        <p>تم استلام طلبك في نظامنا السحابي. سنقوم بالتواصل معك قريباً.</p>
+        <p>تم استلام طلبك في نظامنا السحابي.</p>
         <button onclick="location.reload()" class="btn btn-blue" style="width:auto; margin-top:20px;">العودة للرئيسية</button>
     </div>
 
     <div id="loginPage" class="page card" style="max-width:400px; margin: 0 auto; text-align:center;">
         <h3>دخول المطورين</h3>
         <input type="password" id="adminPass" placeholder="كلمة المرور" style="text-align:center; margin-bottom:15px;">
-        <button onclick="checkAdmin()" class="btn btn-blue">دخول</button>
+        <button id="loginBtn" class="btn btn-blue">دخول</button>
     </div>
 
     <div id="adminPage" class="page card">
         <div class="stats-bar">
             <div><i class="fas fa-database"></i> المسجلين: <span id="userCount">0</span></div>
-            <button onclick="exportExcel()" class="btn" style="background:var(--green); color:white; width:auto;">تصدير Excel</button>
+            <button id="exportBtn" class="btn" style="background:var(--green); color:white; width:auto;">تصدير Excel</button>
         </div>
-        <input type="text" id="searchInp" onkeyup="runSearch()" placeholder="🔍 ابحث بالاسم أو الهوية..." style="margin-bottom:15px;">
+        <input type="text" id="searchInp" placeholder="🔍 ابحث بالاسم أو الهوية..." style="margin-bottom:15px; width:100%;">
         <div style="overflow-x:auto;">
             <table id="mainTable">
                 <thead>
@@ -124,13 +114,13 @@
             </table>
         </div>
     </div>
-
 </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+    // إعدادات Firebase الخاصة بك
     const firebaseConfig = {
         apiKey: "AIzaSyC8PzIvcQ5oV-D3GO1Y3bJ1sWVOhMHTS64",
         authDomain: "myproject-9e7e8.firebaseapp.com",
@@ -144,14 +134,20 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // دالة التنقل بين الصفحات
     window.showPage = (id) => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        if(id !== 'registerPage') document.getElementById('heroSection').style.display='none';
+        document.getElementById('heroSection').style.display = (id === 'registerPage') ? 'block' : 'none';
     };
 
-    document.getElementById('fullForm').onsubmit = (e) => {
+    // إرسال البيانات
+    document.getElementById('fullForm').addEventListener('submit', (e) => {
         e.preventDefault();
+        const btn = document.getElementById('sendBtn');
+        btn.disabled = true;
+        btn.innerText = "جاري الحفظ...";
+
         const id = document.getElementById('idCard').value;
         const data = {
             name: document.getElementById('name').value, idCard: id,
@@ -162,41 +158,76 @@
             aid: document.getElementById('aidType').value, inc: document.getElementById('income').value,
             addr: document.getElementById('address').value, time: new Date().toLocaleString('ar-EG')
         };
-        set(ref(db, 'requests/' + id), data).then(() => showPage('successPage'));
-    };
 
-    window.checkAdmin = () => {
-        if(document.getElementById('adminPass').value === "20052005") {
+        set(ref(db, 'requests/' + id), data)
+            .then(() => showPage('successPage'))
+            .catch(err => {
+                alert("خطأ في الاتصال: " + err.message);
+                btn.disabled = false;
+                btn.innerText = "إرسال الطلب وحفظ البيانات ✅";
+            });
+    });
+
+    // الدخول للوحة التحكم
+    document.getElementById('loginBtn').onclick = () => {
+        const pass = document.getElementById('adminPass').value;
+        if(pass === "20052005") {
             showPage('adminPage');
-            sync();
-        } else { alert("خطأ!"); }
+            syncData();
+        } else {
+            alert("كلمة المرور خاطئة!");
+        }
     };
 
-    function sync() {
+    // جلب البيانات وعرضها
+    function syncData() {
+        const body = document.getElementById('tableBody');
+        body.innerHTML = "<tr><td colspan='12'>جاري تحميل البيانات...</td></tr>";
+        
         onValue(ref(db, 'requests'), (snap) => {
-            const body = document.getElementById('tableBody');
-            body.innerHTML = ""; let c = 0;
+            body.innerHTML = "";
+            let count = 0;
+            if(!snap.exists()) {
+                body.innerHTML = "<tr><td colspan='12'>لا توجد بيانات حالياً</td></tr>";
+                return;
+            }
             snap.forEach((child) => {
-                const v = child.val(); c++;
-                body.innerHTML += `<tr>
+                const v = child.val();
+                count++;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
                     <td>${v.name}</td><td>${v.idCard}</td><td>${v.p1}</td><td>${v.gov}</td>
                     <td>${v.loc}</td><td>${v.fam}</td><td>${v.social}</td><td>${v.dis}</td>
                     <td>${v.house}</td><td>${v.aid}</td><td style="font-size:10px">${v.time}</td>
-                    <td><button onclick="del('${v.idCard}')" class="btn" style="color:red; background:none;"><i class="fas fa-trash"></i></button></td>
-                </tr>`;
+                    <td><button class="del-btn" data-id="${v.idCard}" style="color:red; background:none; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+                `;
+                body.appendChild(tr);
             });
-            document.getElementById('userCount').innerText = c;
+            document.getElementById('userCount').innerText = count;
+
+            // تفعيل أزرار الحذف
+            document.querySelectorAll('.del-btn').forEach(btn => {
+                btn.onclick = () => {
+                    const id = btn.getAttribute('data-id');
+                    if(confirm("هل أنت متأكد من حذف هذا السجل؟")) {
+                        remove(ref(db, 'requests/' + id));
+                    }
+                };
+            });
+        }, (error) => {
+            alert("فشل جلب البيانات: " + error.message + "\nتأكد من إعدادات الـ Rules في Firebase");
         });
     }
 
-    window.runSearch = () => {
-        let val = document.getElementById('searchInp').value.toLowerCase();
-        let rows = document.getElementById('tableBody').getElementsByTagName('tr');
-        for(let r of rows) r.style.display = r.innerText.toLowerCase().includes(val) ? "" : "none";
+    // البحث
+    document.getElementById('searchInp').onkeyup = function() {
+        let val = this.value.toLowerCase();
+        let rows = document.querySelectorAll('#tableBody tr');
+        rows.forEach(r => r.style.display = r.innerText.toLowerCase().includes(val) ? "" : "none");
     };
 
-    window.del = (id) => { if(confirm("حذف؟")) remove(ref(db, 'requests/' + id)); };
-    window.exportExcel = () => {
+    // التصدير
+    document.getElementById('exportBtn').onclick = () => {
         const wb = XLSX.utils.table_to_book(document.getElementById('mainTable'));
         XLSX.writeFile(wb, "بيانات_المستفيدين.xlsx");
     };
