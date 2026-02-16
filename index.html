@@ -3,272 +3,255 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة الإغاثة الشاملة | مؤسسة الإنسان أولاً</title>
-    <!-- المكتبات الأساسية -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>منظومة الإنسان أولاً | القمة للإغاثة الرقمية</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --main: #0f172a; --blue: #2563eb; --blue-light: #eff6ff; --green: #10b981; --red: #ef4444; --gray: #f1f5f9; }
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--gray); margin: 0; padding: 0; color: #334155; }
-        
-        /* الهيدر */
-        nav { background: var(--main); color: white; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .logo { font-size: 1.2rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 10px; }
-        .dev-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 13px; transition: 0.3s; }
-        .dev-btn:hover { background: var(--blue); border-color: var(--blue); }
+        :root {
+            --brand-primary: #0f172a;
+            --brand-accent: #2563eb;
+            --brand-success: #10b981;
+            --brand-danger: #ef4444;
+            --surface: #ffffff;
+            --background: #f1f5f9;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
 
-        /* الهيرو */
-        .hero { background: linear-gradient(135deg, var(--main) 0%, var(--blue) 100%); color: white; padding: 60px 20px; text-align: center; clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%); }
-        .hero h1 { margin: 0; font-size: 1.8rem; }
-        .hero p { opacity: 0.9; margin-top: 10px; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--background);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
 
-        .container { max-width: 1200px; margin: -50px auto 50px; padding: 0 15px; }
-        .card { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        
-        .page { display: none; }
-        .active { display: block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        header {
+            background: var(--surface);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
 
-        /* النماذج */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 20px; }
-        .field { display: flex; flex-direction: column; gap: 8px; }
-        label { font-weight: 600; font-size: 14px; color: var(--main); }
-        input, select, textarea { padding: 12px; border: 1px solid #cbd5e1; border-radius: 10px; background: #fdfdfd; font-size: 15px; width: 100%; }
-        input:focus { border-color: var(--blue); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .brand-container { display: flex; flex-direction: column; line-height: 1.2; }
+        .sup-brand { font-size: 0.8rem; font-weight: 700; color: var(--brand-accent); letter-spacing: 1px; text-transform: uppercase; }
+        .main-logo { font-weight: 800; font-size: 1.6rem; color: var(--brand-primary); }
+        .main-logo span { color: var(--brand-accent); }
 
-        .btn-submit { background: var(--blue); color: white; border: none; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
-        .btn-submit:hover { background: #1d4ed8; }
-        .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; }
+        .nav-pills { display: flex; gap: 8px; background: #f8fafc; padding: 5px; border-radius: 12px; }
+        .nav-pills button {
+            border: none; background: transparent; padding: 8px 20px; border-radius: 8px;
+            font-family: 'Cairo'; font-weight: 600; cursor: pointer; transition: 0.3s; color: var(--text-muted);
+        }
+        .nav-pills button.active { background: white; color: var(--brand-accent); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 
-        /* لوحة المطور */
-        .stats { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-        .count-box { background: var(--main); color: white; padding: 10px 20px; border-radius: 12px; font-size: 14px; }
-        .table-container { overflow-x: auto; background: white; border-radius: 15px; border: 1px solid #e2e8f0; }
-        table { width: 100%; border-collapse: collapse; min-width: 1100px; }
-        th { background: #f8fafc; padding: 15px; border-bottom: 2px solid #e2e8f0; font-size: 13px; }
-        td { padding: 12px; border-bottom: 1px solid #f1f5f9; text-align: center; font-size: 14px; }
-        .status-badge { background: var(--blue-light); color: var(--blue); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; }
-        .btn-del { color: var(--red); background: none; border: none; cursor: pointer; font-size: 16px; }
+        .page-container { flex: 1; padding: 30px 5%; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+        .page { display: none; animation: pageIn 0.4s ease-out; }
+        .page.active { display: block; }
+        @keyframes pageIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* شاشة التحميل */
-        #loader { text-align: center; padding: 40px; color: var(--blue); font-weight: bold; }
+        .card { background: var(--surface); border-radius: 20px; padding: 30px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
+
+        .form-section { margin-bottom: 40px; }
+        .section-header { font-weight: 800; font-size: 1.1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--brand-primary); }
+        .section-header::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+        .field-group { display: flex; flex-direction: column; gap: 8px; }
+        .field-group label { font-weight: 700; font-size: 0.85rem; color: var(--text-muted); }
+        .field-group input, .field-group select {
+            padding: 12px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-family: 'Cairo'; font-size: 0.95rem; transition: 0.3s;
+        }
+
+        .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-box { background: var(--surface); padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; position: relative; }
+        .stat-box .value { font-size: 1.8rem; font-weight: 800; color: var(--brand-primary); }
+
+        .table-wrapper { background: white; border-radius: 16px; border: 1px solid #e2e8f0; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; min-width: 1000px; }
+        th { background: #f8fafc; padding: 16px; text-align: right; color: var(--text-muted); }
+        td { padding: 14px 16px; border-top: 1px solid #f1f5f9; }
+
+        .badge { padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; }
+        .badge-aid { background: #eff6ff; color: var(--brand-accent); }
+        .badge-health { background: #fff1f2; color: var(--brand-danger); }
+
+        .btn-primary { 
+            background: var(--brand-accent); color: white; border: none; padding: 14px 40px; 
+            border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s; font-family: 'Cairo';
+        }
+        footer { text-align: center; padding: 40px; color: var(--text-muted); }
     </style>
 </head>
 <body>
 
-<nav>
-    <div class="logo" onclick="location.reload()"><i class="fas fa-hand-holding-heart"></i> مؤسسة الإنسان أولاً</div>
-    <button onclick="showPage('loginPage')" class="dev-btn"><i class="fas fa-user-lock"></i> لوحة التحكم</button>
-</nav>
+<header>
+    <div class="brand-container">
+        <span class="sup-brand">منظومة الإنسان أولاً</span>
+        <div class="main-logo">HUMAN<span>FIRST</span> 🌐</div>
+    </div>
+    <div class="nav-pills">
+        <button onclick="showPage('home')" id="nav-home" class="active">الرئيسية</button>
+        <button onclick="showPage('register')" id="nav-register">التسجيل</button>
+        <button onclick="showPage('admin')" id="nav-admin">لوحة المطور</button>
+    </div>
+</header>
 
-<div id="heroHeader" class="hero">
-    <h1>نظام تسجيل المساعدات الإغاثية</h1>
-    <p>سجل بياناتك بدقة لضمان وصول الخدمة إليك في أسرع وقت</p>
-</div>
+<div class="page-container">
+    <div id="page-home" class="page active">
+        <div class="card" style="text-align: center; padding: 80px 20px;">
+            <h1>الاستجابة الإنسانية الرقمية</h1>
+            <p>المنصة المركزية الموحدة لجمع وتحليل بيانات المتضررين والنازحين لضمان إدارة الموارد الإغاثية بكفاءة.</p>
+            <button class="btn-primary" onclick="showPage('register')">فتح بوابة التسجيل</button>
+        </div>
+    </div>
 
-<div class="container">
-    
-    <!-- صفحة التسجيل -->
-    <div id="registerPage" class="page active card">
-        <h3 style="margin-top:0"><i class="fas fa-file-signature"></i> نموذج طلب مساعدة جديد</h3>
-        <form id="requestForm">
-            <div class="grid">
-                <div class="field"><label>الاسم الرباعي</label><input type="text" id="name" required placeholder="الاسم كما في الهوية"></div>
-                <div class="field"><label>رقم الهوية</label><input type="number" id="idCard" required placeholder="9 أرقام"></div>
-                <div class="field"><label>رقم الجوال</label><input type="number" id="phone" required placeholder="059xxxxxxx"></div>
-                <div class="field"><label>المحافظة</label>
-                    <select id="gov">
-                        <option>شمال غزة</option><option>غزة</option><option>الوسطى</option><option>خانيونس</option><option>رفح</option>
-                    </select>
+    <div id="page-register" class="page">
+        <div class="card">
+            <form id="megaForm">
+                <div class="form-section">
+                    <div class="section-header">👤 المعلومات الأساسية</div>
+                    <div class="form-grid">
+                        <div class="field-group"><label>الاسم الرباعي</label><input type="text" id="fname" required></div>
+                        <div class="field-group"><label>رقم الهوية</label><input type="number" id="idcard" required></div>
+                        <div class="field-group"><label>رقم التواصل</label><input type="tel" id="whatsapp" required></div>
+                        <div class="field-group"><label>عدد أفراد الأسرة</label><input type="number" id="fcount" value="1"></div>
+                    </div>
                 </div>
-                <div class="field"><label>مكان التواجد الحالي</label><input type="text" id="loc" required placeholder="اسم المدرسة أو الحي"></div>
-                <div class="field"><label>عدد أفراد الأسرة</label><input type="number" id="fam" required></div>
-                <div class="field"><label>نوع المساعدة</label>
-                    <select id="aid">
-                        <option>طرد غذائي</option><option>قسيمة شرائية</option><option>خيمة</option><option>حرامات وفرشات</option>
-                    </select>
+                <div class="form-section">
+                    <div class="section-header">📍 السكن والحالة</div>
+                    <div class="form-grid">
+                        <div class="field-group"><label>المحافظة</label>
+                            <select id="gov" onchange="loadLocality()">
+                                <option value="">اختر..</option>
+                                <option>شمال غزة</option><option>غزة</option><option>الوسطى</option><option>خانيونس</option><option>رفح</option>
+                            </select>
+                        </div>
+                        <div class="field-group"><label>المنطقة</label><select id="locality"></select></div>
+                        <div class="field-group"><label>نوع المساعدة</label>
+                            <select id="aid_type">
+                                <option>سلة غذائية</option><option>دعم مالي طارئ (كاش)</option><option>خيمة</option>
+                            </select>
+                        </div>
+                        <div class="field-group"><label>الحالة الصحية</label>
+                            <select id="health_status"><option>سليم</option><option>جريح</option><option>مرض مزمن</option></select>
+                        </div>
+                    </div>
                 </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">تأكيد وحفظ البيانات سحابياً</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="page-admin" class="page">
+        <div id="admin-auth" class="card" style="max-width: 400px; margin: auto; text-align: center;">
+            <h3>🔐 دخول آمن</h3>
+            <input type="password" id="adm-key" placeholder="كلمة المرور" style="width:100%; padding:10px; margin:10px 0;">
+            <button class="btn-primary" onclick="validateAdmin()" style="width:100%">دخول</button>
+        </div>
+
+        <div id="admin-dashboard" style="display: none;">
+            <div class="stats-row">
+                <div class="stat-box">الطلبات: <div class="value" id="s-total">0</div></div>
+                <div class="stat-box">المستفيدين: <div class="value" id="s-people">0</div></div>
             </div>
-            <div class="field"><label>ملاحظات إضافية (اختياري)</label><textarea id="note" rows="2"></textarea></div>
-            <button type="submit" id="submitBtn" class="btn-submit">إرسال الطلب وحفظ البيانات <i class="fas fa-paper-plane"></i></button>
-        </form>
-    </div>
-
-    <!-- صفحة النجاح -->
-    <div id="successPage" class="page card" style="text-align:center;">
-        <i class="fas fa-check-circle" style="font-size:70px; color:var(--green);"></i>
-        <h2>تم الإرسال بنجاح</h2>
-        <p>بياناتك محفوظة الآن في السجلات السحابية للمؤسسة.</p>
-        <button onclick="location.reload()" class="btn-submit" style="width:200px; margin: 20px auto;">العودة للرئيسية</button>
-    </div>
-
-    <!-- صفحة الدخول -->
-    <div id="loginPage" class="page card" style="max-width:400px; margin: 0 auto; text-align:center;">
-        <h3>دخول المطورين</h3>
-        <input type="password" id="passCode" placeholder="كلمة المرور" style="text-align:center; margin-bottom:15px;">
-        <button onclick="login()" class="btn-submit">دخول النظام <i class="fas fa-sign-in-alt"></i></button>
-    </div>
-
-    <!-- لوحة المطورين -->
-    <div id="adminPage" class="page card">
-        <div class="stats">
-            <div class="count-box">إجمالي الطلبات: <span id="totalCount">0</span></div>
-            <button onclick="exportData()" class="dev-btn" style="background:var(--green); border:none; height:40px;">تصدير Excel <i class="fas fa-file-excel"></i></button>
-        </div>
-        <input type="text" id="search" onkeyup="filterTable()" placeholder="🔍 ابحث بالاسم أو الهوية..." style="margin-bottom:15px; padding:10px;">
-        
-        <div id="loader">جاري جلب البيانات من السحابة...</div>
-
-        <div class="table-container">
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th>الاسم</th><th>الهوية</th><th>الجوال</th><th>المحافظة</th><th>المكان</th><th>الأفراد</th><th>المساعدة</th><th>التاريخ</th><th>حذف</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody"></tbody>
-            </table>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>الاسم</th><th>الهوية</th><th>الموقع</th><th>الأفراد</th><th>المساعدة</th><th>التاريخ</th></tr>
+                    </thead>
+                    <tbody id="dbBody"></tbody>
+                </table>
+            </div>
         </div>
     </div>
-
 </div>
 
-<!-- Firebase SDKs -->
+<footer>منظومة الإنسان أولاً © 2026</footer>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // إعدادات المشروع بناءً على صورك السابقة
     const firebaseConfig = {
         apiKey: "AIzaSyC8PzIvcQ5oV-D3GO1Y3bJ1sWVOhMHTS64",
         authDomain: "myproject-9e7e8.firebaseapp.com",
-        databaseURL: "https://myproject-9e7e8-default-rtdb.firebaseio.com",
         projectId: "myproject-9e7e8",
         storageBucket: "myproject-9e7e8.firebasestorage.app",
         messagingSenderId: "303472996551",
-        appId: "1:303472996551:web:86012a6125028c240b4487"
+        appId: "1:303472996551:web:86012a7b474a8ef6870ee2"
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+    const db = getFirestore(app);
 
-    // وظيفة التنقل
-    window.showPage = (id) => {
+    const geoData = {
+        "شمال غزة": ["مخيم جباليا", "بيت لاهيا"],
+        "غزة": ["الرمال", "النصر", "الشجاعية"],
+        "الوسطى": ["دير البلح", "النصيرات"],
+        "خانيونس": ["المواصي", "البلد"],
+        "رفح": ["تل السلطان", "الشابورة"]
+    };
+
+    window.loadLocality = () => {
+        const gov = document.getElementById('gov').value;
+        const loc = document.getElementById('locality');
+        loc.innerHTML = '';
+        if(gov) geoData[gov].forEach(h => loc.innerHTML += `<option>${h}</option>`);
+    };
+
+    window.showPage = (pId) => {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.getElementById('heroHeader').style.display = (id === 'registerPage') ? 'block' : 'none';
+        document.getElementById('page-' + pId).classList.add('active');
+        if(pId === 'admin' && document.getElementById('admin-dashboard').style.display === 'block') renderTable();
     };
 
-    // إرسال البيانات
-    document.getElementById('requestForm').onsubmit = async (e) => {
+    document.getElementById('megaForm').onsubmit = async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.innerText = "جاري الحفظ بالسحابة...";
-
-        const id = document.getElementById('idCard').value;
-        const payload = {
-            name: document.getElementById('name').value,
-            idCard: id,
-            phone: document.getElementById('phone').value,
-            gov: document.getElementById('gov').value,
-            loc: document.getElementById('loc').value,
-            fam: document.getElementById('fam').value,
-            aid: document.getElementById('aid').value,
-            note: document.getElementById('note').value,
-            time: new Date().toLocaleString('ar-EG')
-        };
-
         try {
-            await set(ref(db, 'requests/' + id), payload);
-            showPage('successPage');
-        } catch (error) {
-            alert("فشل في حفظ البيانات: " + error.message);
-            btn.disabled = false;
-            btn.innerText = "إرسال الطلب وحفظ البيانات";
-        }
+            await addDoc(collection(db, "registrations"), {
+                name: document.getElementById('fname').value,
+                id: document.getElementById('idcard').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                fcount: parseInt(document.getElementById('fcount').value),
+                gov: document.getElementById('gov').value,
+                loc: document.getElementById('locality').value,
+                aid: document.getElementById('aid_type').value,
+                health: document.getElementById('health_status').value,
+                createdAt: new Date()
+            });
+            alert("تم الحفظ بنجاح!");
+            showPage('home');
+        } catch (err) { alert("خطأ في الاتصال"); }
     };
 
-    // تسجيل الدخول
-    window.login = () => {
-        if(document.getElementById('passCode').value === "20052005") {
-            showPage('adminPage');
-            fetchData();
-        } else {
-            alert("كلمة المرور غير صحيحة!");
-        }
+    window.validateAdmin = () => {
+        if(document.getElementById('adm-key').value === "2005") {
+            document.getElementById('admin-auth').style.display = 'none';
+            document.getElementById('admin-dashboard').style.display = 'block';
+            renderTable();
+        } else alert("خطأ");
     };
 
-    // جلب البيانات (الحل المضمون لمشكلة جلب البيانات)
-    function fetchData() {
-        const tableBody = document.getElementById('tableBody');
-        const loader = document.getElementById('loader');
-        
-        // استخدام onValue لضمان المزامنة اللحظية
-        onValue(ref(db, 'requests'), (snapshot) => {
-            loader.style.display = 'none';
-            tableBody.innerHTML = "";
-            let count = 0;
-
-            if (snapshot.exists()) {
-                snapshot.forEach((childSnapshot) => {
-                    const data = childSnapshot.val();
-                    count++;
-                    const row = `
-                        <tr>
-                            <td><b>${data.name}</b></td>
-                            <td>${data.idCard}</td>
-                            <td>${data.phone}</td>
-                            <td>${data.gov}</td>
-                            <td>${data.loc}</td>
-                            <td>${data.fam}</td>
-                            <td><span class="status-badge">${data.aid}</span></td>
-                            <td style="font-size:11px">${data.time}</td>
-                            <td><button onclick="deleteRecord('${childSnapshot.key}')" class="btn-del"><i class="fas fa-trash-alt"></i></button></td>
-                        </tr>
-                    `;
-                    tableBody.innerHTML += row;
-                });
-                document.getElementById('totalCount').innerText = count;
-            } else {
-                tableBody.innerHTML = "<tr><td colspan='9'>لا توجد بيانات مسجلة حالياً</td></tr>";
-                document.getElementById('totalCount').innerText = "0";
-            }
-        }, (error) => {
-            loader.innerHTML = "حدث خطأ أثناء جلب البيانات: " + error.message;
-            console.error(error);
+    async function renderTable() {
+        const querySnapshot = await getDocs(query(collection(db, "registrations"), orderBy("createdAt", "desc")));
+        const body = document.getElementById('dbBody');
+        body.innerHTML = '';
+        let totalP = 0;
+        querySnapshot.forEach(doc => {
+            const d = doc.data();
+            totalP += d.fcount;
+            body.innerHTML += `<tr><td>${d.name}</td><td>${d.id}</td><td>${d.gov}</td><td>${d.fcount}</td><td>${d.aid}</td><td>${d.createdAt.toDate().toLocaleDateString('ar-EG')}</td></tr>`;
         });
+        document.getElementById('s-total').innerText = querySnapshot.size;
+        document.getElementById('s-people').innerText = totalP;
     }
-
-    // حذف سجل
-    window.deleteRecord = async (id) => {
-        if(confirm("هل أنت متأكد من حذف هذا السجل نهائياً؟")) {
-            try {
-                await remove(ref(db, 'requests/' + id));
-            } catch (error) {
-                alert("فشل الحذف: " + error.message);
-            }
-        }
-    };
-
-    // تصفية الجدول
-    window.filterTable = () => {
-        const q = document.getElementById('search').value.toLowerCase();
-        const rows = document.querySelectorAll('#tableBody tr');
-        rows.forEach(row => {
-            row.style.display = row.innerText.toLowerCase().includes(q) ? "" : "none";
-        });
-    };
-
-    // تصدير إكسل
-    window.exportData = () => {
-        const table = document.getElementById("dataTable");
-        const wb = XLSX.utils.table_to_book(table);
-        XLSX.writeFile(wb, "كشف_المستفيدين_مؤسسة_الإنسان_أولاً.xlsx");
-    };
-
 </script>
 </body>
 </html>
-
