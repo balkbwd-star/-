@@ -56,27 +56,22 @@
                 </div>
                 <div class="input-group"><label>مكان النزوح الحالي</label><input type="text" id="currentLoc" placeholder="اسم المدرسة أو المخيم" required></div>
                 <div class="input-group"><label>عدد أفراد الأسرة</label><input type="number" id="famCount" required></div>
-                <div class="input-group"><label>الحالة الاجتماعية</label>
-                    <select id="socialStatus">
-                        <option>معيل (أب)</option><option>أرملة</option><option>مطلقة</option><option>أعزب</option>
-                    </select>
-                </div>
                 <div class="input-group"><label>نوع المساعدة المطلوبة</label>
                     <select id="aidType">
                         <option>طرد غذائي</option><option>مساعدة نقدية</option><option>خيمة</option><option>منظفات</option>
                     </select>
                 </div>
-                <div class="input-group"><label>الدخل الشهري</label><input type="text" id="income" placeholder="مثلاً: لا يوجد"></div>
             </div>
             <div class="input-group"><label>العنوان التفصيلي وملاحظات</label><textarea id="address" rows="3" required></textarea></div>
-            <button type="submit" class="btn btn-blue" id="sendBtn" style="margin-top:20px;">إرسال الطلب ✅</button>
+            <button type="submit" class="btn btn-blue" id="sendBtn" style="margin-top:20px;">إرسال الطلب وحفظ البيانات ✅</button>
         </form>
     </div>
 
     <div id="successPage" class="page card" style="text-align:center;">
         <i class="fas fa-check-circle" style="font-size:70px; color:var(--green);"></i>
-        <h2>تم الحفظ بنجاح</h2>
-        <button onclick="location.reload()" class="btn btn-blue" style="width:auto; margin-top:20px;">عودة</button>
+        <h2>تم استلام طلبك بنجاح</h2>
+        <p>بياناتك الآن محفوظة في السجل السحابي للمؤسسة.</p>
+        <button onclick="location.reload()" class="btn btn-blue" style="width:auto; margin-top:20px;">العودة للرئيسية</button>
     </div>
 
     <div id="loginPage" class="page card" style="max-width:400px; margin: 0 auto; text-align:center;">
@@ -95,7 +90,7 @@
             <table id="mainTable">
                 <thead>
                     <tr>
-                        <th>الاسم</th><th>الهوية</th><th>الجوال</th><th>المنطقة</th><th>أفراد</th><th>مساعدة</th><th>التاريخ</th><th>حذف</th>
+                        <th>الاسم</th><th>الهوية</th><th>الجوال</th><th>المنطقة</th><th>النزوح</th><th>أفراد</th><th>مساعدة</th><th>التاريخ</th><th>حذف</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody"></tbody>
@@ -108,7 +103,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, set, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // البيانات الجديدة من صورتك الأخيرة
+    // البيانات المحدثة من صورتك
     const firebaseConfig = {
         apiKey: "AIzaSyC8PzIvcQ5oV-D3GO1Y3bJ1sWVOhMHTS64",
         authDomain: "myproject-9e7e8.firebaseapp.com",
@@ -138,54 +133,70 @@
             name: document.getElementById('name').value, idCard: id,
             p1: document.getElementById('phone1').value, p2: document.getElementById('phone2').value,
             gov: document.getElementById('gov').value, loc: document.getElementById('currentLoc').value,
-            fam: document.getElementById('famCount').value, social: document.getElementById('socialStatus').value,
-            aid: document.getElementById('aidType').value, inc: document.getElementById('income').value,
+            fam: document.getElementById('famCount').value,
+            aid: document.getElementById('aidType').value,
             addr: document.getElementById('address').value, time: new Date().toLocaleString('ar-EG')
         };
 
         set(ref(db, 'requests/' + id), data)
             .then(() => showPage('successPage'))
-            .catch(err => alert("خطأ: " + err.message));
+            .catch(err => { alert("حدث خطأ: " + err.message); btn.disabled = false; });
     };
 
     // الدخول للوحة التحكم
     document.getElementById('loginBtn').onclick = () => {
         if(document.getElementById('adminPass').value === "20052005") {
             showPage('adminPage');
-            sync();
-        } else { alert("خطأ!"); }
+            syncData();
+        } else { alert("كلمة المرور خاطئة!"); }
     };
 
-    function sync() {
+    // جلب البيانات
+    function syncData() {
+        const body = document.getElementById('tableBody');
+        body.innerHTML = "<tr><td colspan='9'>جاري تحميل البيانات...</td></tr>";
+        
         onValue(ref(db, 'requests'), (snap) => {
-            const body = document.getElementById('tableBody');
-            body.innerHTML = ""; let c = 0;
-            if(!snap.exists()) { body.innerHTML = "لا توجد بيانات"; return; }
+            body.innerHTML = "";
+            let count = 0;
+            if(!snap.exists()) {
+                body.innerHTML = "<tr><td colspan='9'>لا توجد طلبات مسجلة حتى الآن</td></tr>";
+                return;
+            }
             snap.forEach((child) => {
-                const v = child.val(); c++;
+                const v = child.val();
+                count++;
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${v.name}</td><td>${v.idCard}</td><td>${v.p1}</td><td>${v.gov}</td>
-                    <td>${v.fam}</td><td>${v.aid}</td><td style="font-size:10px">${v.time}</td>
-                    <td><button onclick="deleteItem('${v.idCard}')" style="color:red; background:none; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
+                    <td>${v.loc}</td><td>${v.fam}</td><td>${v.aid}</td><td style="font-size:10px">${v.time}</td>
+                    <td><button onclick="deleteReq('${child.key}')" style="color:var(--red); background:none; border:none; cursor:pointer;"><i class="fas fa-trash"></i></button></td>
                 `;
                 body.appendChild(tr);
             });
-            document.getElementById('userCount').innerText = c;
+            document.getElementById('userCount').innerText = count;
+        }, (err) => {
+            alert("فشل جلب البيانات: " + err.message);
         });
     }
 
-    window.deleteItem = (id) => { if(confirm("حذف؟")) remove(ref(db, 'requests/' + id)); };
+    window.deleteReq = (id) => {
+        if(confirm("هل أنت متأكد من حذف هذا الطلب؟")) {
+            remove(ref(db, 'requests/' + id));
+        }
+    };
 
+    // البحث
     document.getElementById('searchInp').onkeyup = function() {
         let val = this.value.toLowerCase();
         let rows = document.querySelectorAll('#tableBody tr');
         rows.forEach(r => r.style.display = r.innerText.toLowerCase().includes(val) ? "" : "none");
     };
 
+    // التصدير
     document.getElementById('exportBtn').onclick = () => {
         const wb = XLSX.utils.table_to_book(document.getElementById('mainTable'));
-        XLSX.writeFile(wb, "بيانات_المستفيدين.xlsx");
+        XLSX.writeFile(wb, "كشف_المستفيدين.xlsx");
     };
 </script>
 </body>
